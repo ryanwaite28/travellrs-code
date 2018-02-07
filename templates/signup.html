@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% include 'dependencies-1.html' %}
+
+    <title>Travellrs | Sign Up!</title>
+
+  </head>
+  <body>
+
+    {% include 'navbar-1.html' %}
+
+    <div class="middle-box">
+      <h5 class="text-center">Sign Up</h5>
+
+      <div class="row">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="Username" id="sign_up_username" type="text">
+              <label for="sign_up_username">Username</label>
+            </div>
+
+            <div class="input-field col s12">
+              <input placeholder="Email" id="sign_up_email" type="text" >
+              <label for="sign_up_email">Email</label>
+            </div>
+            <div class="input-field col s12">
+              <input placeholder="Verify Email" id="sign_up_email_verify" type="text" >
+              <label for="sign_up_email_verify">Verify Email</label>
+            </div>
+
+            <div class="input-field col s12">
+              <input placeholder="Password" id="sign_up_password" type="password" >
+              <label for="sign_up_email">Password</label>
+            </div>
+            <div class="input-field col s12">
+              <input placeholder="Verify Password" id="sign_up_password_verify" type="password" >
+              <label for="sign_up_password_verify">Verify Password</label>
+            </div>
+
+            <div class="input-field col s12">
+              <button class="blue btn waves-effect waves-light" type="button" name="action" data-bind="click: sign_up">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Controller -->
+    <script src="/static/js/signup_ctrl.js"></script>
+  </body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% include 'dependencies-1.html' %}
+
+    <title>Travellrs | Home!</title>
+
+  </head>
+  <body>
+
+    {% include 'navbar-1.html' %}
+
+    <!-- Side Bar -->
+  	<div id="welcome-sidebar" class="transition ghost">
+
+  		<div id="welcome-sidebar-inner-top">
+  			<p class="text-center">
+  				<a class="btn-floating red" title="Close Sidebar" id="close-sb-icon">
+            <i class="material-icons">close</i>
+          </a>
+  			</p>
+  		</div>
+
+  		<!-- Switches -->
+
+  		<div id="welcome-sidebar-inner-main">
+  			<div id="create-box" class="switch-box transition">
+  				<div class="row">
+  					<div class="col s12">
+  						<div class="card-panel">
+  							<h5 class="text-center"><span class="card-title"><strong>Create Travel!</strong></span></h5>
+
+  							<p class="text-center">
+                  Location: <span id="current_search_location"></span>
+                </p>
+                <br/>
+
+  							<div class="input-field col s12">
+  								<textarea data-bind="value: create_travel_caption" type="text" id="create_travel_caption" type="text" class="validate materialize-textarea"></textarea>
+  								<label for="create_travel_caption">Caption</label>
+  							</div>
+
+  							<div class="file-field input-field col s12">
+  								<div class="btn">
+  									<span>File</span>
+  									<input class="blue" type="file" name="create_travel_file" id="create_travel_file" accept="image/*">
+  								</div>
+  								<div class="file-path-wrapper">
+  									<input class="file-path validate" type="text" id="create_travel_filetext">
+  								</div>
+  							</div>
+
+  							<br/>
+  							<button class="btn waves-effect waves-light blue" type="button" name="action" >
+  								Create
+  								<i class="material-icons right">send</i>
+  							</button>
+  						</div>
+  					</div>
+  				</div>
+  			</div>
+
+  			<div id="travels-box" class="switch-box transition">
+  				<p class="text-center" data-bind="if: travelsList.length == 0">
+            <span>No Travels, Yet</span>
+          </p>
+
+          <div data-bind="foreach: travelsList">
+            <div class="col s12 transition">
+              <div class="card">
+                <div class="card-image">
+                  <img src="">
+                  <span class="card-title"></span>
+                </div>
+                <div class="card-content">
+                  <p></p>
+
+                  <br/>
+                  <div class="chip">
+                    <img src="" alt="">
+                    <span>Jane Doe</span>
+                  </div>
+                  <br/>
+                  <p class="caption-1">
+                    <br/>
+                    <span class="text-grey">
+                      Created: <em></em>
+                    </span>
+                  </p>
+                </div>
+                <div class="card-action">
+                  <a href="#">Link</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+  			</div>
+      </div>
+
+  		<!-- End Switches -->
+
+  	</div>
+
+    <!-- Map Container -->
+  	<input type="text" id="pac-input" placeholder="Enter a Location" />
+  	<div id="map-div"></div>
+
+  	<!--  -->
+  	<div id="glyph-contain" class="transition ghost">
+  		<p class="text-right">
+  			<span><a class="btn-floating green" title="Reset Map Zoom" id="zoom-icon">
+        	<i class="material-icons">zoom_out_map</i>
+      	</a></span>
+  			<span><a class="btn-floating yellow" title="Find Random Posts" id="frm-icon">
+        	<i class="material-icons">refresh</i>
+      	</a></span>
+  			<span><a data-switch-id="travels-box" class="btn-floating red map-btn" title="Open Posts List" id="opl-icon" map-btn>
+        	<i class="material-icons">menu</i>
+      	</a></span>
+        <span data-bind="visible: signed_in">
+    			<a data-switch-id="create-box" title="Create Travel" id="create-icon" class="btn-floating blue map-btn">
+             <i class="material-icons">add</i>
+           </a>
+    		</span>
+  		</p>
+
+
+  	</div>
+
+  	<div id="activity-overlay" class="transition">
+  		<div class="dim"></div>
+  		<div style="position: relative">
+  			<img id="activity-gif" src="/static/img/loading-1.gif" />
+  		</div>
+  	</div>
+
+  	<!--  -->
+  	<style>
+  		div#glyph-contain>p>a.btn-floating {
+  			display: block;
+  			margin-bottom: 5px;
+  		}
+  	</style>
+
+  	<script>
+  		$(document).ready(() => {
+  			$("a.map-btn").click(function() {
+  				var span = $(this);
+  				let switch_id = "#" + span.data("switch-id");
+  				$(".switch-box").addClass("hide-elem");
+  				$(switch_id).removeClass("hide-elem");
+  				$("#welcome-sidebar").removeClass("ghost");
+  			});
+
+  			$("#close-sb-icon").click(function() {
+  				$("#welcome-sidebar").addClass("ghost");
+  			});
+  		});
+  	</script>
+
+    <script>
+      const current_search_location = $('#current_search_location');
+      current_search_location.text('none selected...');
+
+  		var manage = {
+  			map: null,
+  			marker: null,
+  			infowindow: null,
+  			input: null,
+  			autocomplete: null,
+  		}
+
+  		function initMap() {
+  			// Create a map object and specify the DOM element for display.
+  			manage.map = new google.maps.Map(document.getElementById('map-div'), {
+  				center: {
+  					lat: 39.173303,
+  					lng: -77.177274
+  				},
+  				scrollwheel: true,
+  				zoom: 5
+  			});
+  			manage.marker = new google.maps.Marker({
+  				map: manage.map,
+  			});
+  			manage.marker.clearLocation = function() {
+  				manage.marker.place_id = false;
+  				manage.marker.location = false;
+  				manage.marker.latitude = false;
+  				manage.marker.longitude = false;
+          current_search_location.text('none selected...');
+  				console.log("location cleared");
+  			}
+
+  			manage.infowindow = new google.maps.InfoWindow();
+
+  			manage.input = /** @type {HTMLInputElement} */ (
+  				document.getElementById('pac-input'));
+
+  			// Create the autocomplete helper, and associate it with
+  			// an HTML text input box.
+  			manage.autocomplete = new google.maps.places.Autocomplete(manage.input);
+  			manage.autocomplete.bindTo('bounds', manage.map);
+
+  			manage.map.controls[google.maps.ControlPosition.TOP_LEFT].push(manage.input);
+
+  			// Get the full place details when the user selects a place from the
+  			// list of suggestions.
+  			google.maps.event.addListener(manage.autocomplete, 'place_changed', function() {
+  				manage.infowindow.close();
+  				var place = manage.autocomplete.getPlace();
+  				if (!place.geometry) {
+  					return;
+  				}
+
+  				if (place.geometry.viewport) {
+  					manage.map.fitBounds(place.geometry.viewport);
+  				} else {
+  					manage.map.setCenter(place.geometry.location);
+  					manage.map.setZoom(17);
+  				}
+
+  				// console.log(place);
+  				manage.marker.place_id = place.place_id;
+  				manage.marker.location = place.formatted_address;
+  				manage.marker.latitude = place.geometry.location.lat();
+  				manage.marker.longitude = place.geometry.location.lng();
+
+          current_search_location.text(place.formatted_address);
+
+  				// Set the position of the marker using the place ID and location.
+  				manage.marker.setPlace( /** @type {!google.maps.Place} */ ({
+  					placeId: place.place_id,
+  					location: place.geometry.location
+  				}));
+  				manage.marker.setVisible(true);
+
+  				manage.infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+  					'Place ID: ' + place.place_id + '<br>' +
+  					place.formatted_address +
+  					'</div>');
+
+  				manage.infowindow.open(manage.map, manage.marker);
+  			});
+
+  			Object.freeze(manage);
+  		}
+  	</script>
+
+    <!-- Controller -->
+    <script src="/static/js/home_ctrl.js"></script>
+
+  	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAzaQUpCNFCAbkizLVgUh4bqNtUYmkEMY&libraries=places&callback=initMap" async defer></script>
+
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% include 'dependencies-1.html' %}
+
+    <title>Travellrs | Sign In!</title>
+
+  </head>
+  <body>
+
+    {% include 'navbar-1.html' %}
+
+    <div class="middle-box">
+      <h5 class="text-center">Sign In</h5>
+
+      <div class="row">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="Email" id="sign_in_email" type="text" >
+              <label for="sign_in_email">Email</label>
+            </div>
+
+            <div class="input-field col s12">
+              <input placeholder="Password" id="sign_in_password" type="password" >
+              <label for="sign_in_password">Password</label>
+            </div>
+
+            <div class="input-field col s12">
+              <button class="blue btn waves-effect waves-light" type="button" name="action" data-bind="click: sign_in">Submit
+                <i class="material-icons right">send</i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Controller -->
+    <script src="/static/js/signin_ctrl.js"></script>
+  </body>
+</html>
